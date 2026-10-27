@@ -37,7 +37,8 @@ endif
 # Android: build the unix port as libmain.so, loaded by SDL's Java activity
 # (see ports/android/build.sh)
 ifeq ($(LV_ANDROID),1)
-CFLAGS_USERMOD += -fPIC
+# The NDK keeps frame pointers, which the x86_64 gchelper asm can't clobber
+CFLAGS_USERMOD += -fPIC -DMICROPY_GCREGS_SETJMP=1
 LDFLAGS_USERMOD += -shared -Wl,-Bsymbolic -Wl,-soname,libmain.so -llog -landroid
 SRC_USERMOD_C += $(abspath $(USERMOD_DIR))/ports/android/android_main.c
 endif
