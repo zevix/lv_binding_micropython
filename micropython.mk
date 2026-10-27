@@ -34,6 +34,14 @@ CFLAGS_USERMOD += $(FREETYPE_CFLAGS_USERMOD) -DMICROPY_FREETYPE=1
 LDFLAGS_USERMOD += $(FREETYPE_LDFLAGS_USERMOD)
 endif
 
+# Android: build the unix port as libmain.so, loaded by SDL's Java activity
+# (see ports/android/build.sh)
+ifeq ($(LV_ANDROID),1)
+CFLAGS_USERMOD += -fPIC
+LDFLAGS_USERMOD += -shared -Wl,-Bsymbolic -Wl,-soname,libmain.so -llog -landroid
+SRC_USERMOD_C += $(abspath $(USERMOD_DIR))/ports/android/android_main.c
+endif
+
 # Enable FFMPEG
 # FFMPEG_LIBS := libavformat libavcodec libswscale libavutil
 # FFMPEG_CFLAGS_USERMOD :=  $(shell pkg-config --silence-errors --cflags $(FFMPEG_LIBS))
@@ -84,6 +92,7 @@ $(LVGL_MPY): $(ALL_LVGL_SRC) $(LVGL_BINDING_DIR)/gen/gen_mpy.py
 		-I $(LVGL_BINDING_DIR)/pycparser/utils/fake_libc_include \
 		-I $(LVGL_BINDING_DIR)/stubs/include \
 		$(CFLAGS_USERMOD) \
+		-include $(LVGL_DIR)/lvgl.h \
 		$(LVGL_DIR)/lvgl_private.h > $(LVGL_PP)
 	$(Q)$(PYTHON) $(LVGL_BINDING_DIR)/gen/gen_mpy.py -M lvgl -MP lv -MD $(LVGL_MPY_METADATA) -E $(LVGL_PP) $(LVGL_DIR)/lvgl.h > $@
 

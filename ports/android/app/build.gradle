@@ -1,0 +1,23 @@
+// Replaces SDL's android-project/app/build.gradle: the native libraries are
+// prebuilt by build.sh into src/main/jniLibs instead of using ndk-build.
+apply plugin: 'com.android.application'
+
+android {
+    namespace "org.lvgl.micropython"
+    compileSdkVersion 34
+    defaultConfig {
+        applicationId "org.lvgl.micropython"
+        minSdkVersion 28
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    lint {
+        abortOnError false
+    }
+}
